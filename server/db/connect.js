@@ -2,12 +2,17 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
   try {
-    console.log(process.env.URI);
-    const conn = await mongoose.connect(process.env.URI,{
-        useNewUrlParser: true,
-        useCreateIndex: true,
-        useFindAndModify: false,
-        useUnifiedTopology: true,
+    const uri = process.env.URI;
+
+    if (!uri) {
+      throw new Error('URI not defined in .env file');
+    }
+
+    const conn = await mongoose.connect(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useCreateIndex: true,
+      useFindAndModify: false,
     });
 
     console.log('MongoDB connected');

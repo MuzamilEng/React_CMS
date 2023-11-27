@@ -1,49 +1,40 @@
 const express = require('express');
 const app = express();
-const multer = require('multer');
-require('dotenv').config({ path: '.env' })
-const connectDB = require('./db/connect');
-const errorHandler = require('./middleware/error-handler');
-const notFound = require('./middleware/not-found');
-const cors = require('cors');
-const path = require('path');
+const mongoose = require('mongoose');
 const componentsRoutes = require('./routes/components');
+const templateRoutes = require('./routes/templates');
+const cors = require('cors');
 
 
+const port = 5000; // Set the port directly
 
-const storage = multer.diskStorage({
-  destination: ('./public/uploads/'),
-  filename: (req, file, cb) => {
-    cb(null, file.fieldname + "_" + Date.now() + path.extname(file.originalname));
-  },
-});
-
-const upload = multer({
-  storage: storage,
-  limits: {
-    fieldSize: 10 * 1024 * 1024,
-  }
-});
- const port = process.env.PORT || 8000;
 // Middleware
-app.use(cors());
 app.use(express.json());
+app.use(cors());
 
 // Routes
+app.use('/api/v1/components', componentsRoutes);
+app.use('/api/v1/templates', templateRoutes)
+// MongoDB connection
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect('mongodb+srv://muzekhan777:muzamil@cluster0.jhpz0k8.mongodb.net/?retryWrites=true&w=majority', {
+      useNewUrlParser: true, // Add this option to use the new URL parser
+      useUnifiedTopology: true,
+      useCreateIndex: true,
+      useFindAndModify: false,
+    });
 
-app.use('/api/v1', componentsRoutes)
-
-
-app.use(errorHandler)
-app.use(notFound)
+    console.log('MongoDB connected');
+  } catch (err) {
+    console.error('Error connecting to MongoDB:', err);
+  }
+};
 
 const start = async () => {
   try {
-    if (!process.env.URI) {
-      throw new Error('MongoDB URI not defined');
-    }
+    await connectDB(); // Call the connectDB function
 
-    await connectDB(process.env.URI);
     app.listen(port, () =>
       console.log(`Server is listening on port ${port}...`)
     );
@@ -52,5 +43,4 @@ const start = async () => {
   }
 };
 
-
-start(); 
+start();

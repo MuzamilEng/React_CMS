@@ -197,14 +197,24 @@ const Home = () => {
         }
     };
 
-  const addToTemplate = () => {
-  const templateName = prompt('Enter a name for the template:');
-  if (templateName) {
-    setTemplates(prevTemplates => [...prevTemplates, { name: templateName, fields: formFields }]);
-    console.log(templates, "template");
-    setFormFields([]); // Clear formFields after adding to template
-  }
-};
+    const addToTemplate = async () => {
+      const templateName = prompt('Enter a name for the template:');
+      if (templateName) {
+        try {
+          // Send a POST request to save the template in the database
+          const response = await axios.post('http://localhost:5000/api/v1/templates', {
+            name: templateName,
+            fields: formFields,
+          });
+          console.log(response.data);
+          setTemplates(prevTemplates => [...prevTemplates, { _id: response.data._id, name: templateName, fields: formFields }]);
+          setFormFields([]); // Clear formFields after adding to template
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    };
+    
 
   
     const renderTemplateFields = () => {
@@ -242,6 +252,21 @@ const Home = () => {
         setFormFields([...formFields, imageField]);
         setImageField({ label: '', name: '', type: 'image' });
     };
+
+    useEffect(() => {
+      const fetchTemplates = async () => {
+        try {
+          const response = await axios.get('http://localhost:5000/api/v1/templates');
+          setTemplates(response.data);
+          console.log(templates, 'templates');
+        } catch (error) {
+          console.error(error);
+        }
+      };
+    
+      fetchTemplates();
+    }, [templates]);
+    
 
     return (
         <div>
