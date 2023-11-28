@@ -2,8 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from '../Component/Sidebar';
+import { useGlobalContext } from '../UserContext/UserContext';
 
 const Home = () => {
+  const {setFetchTrigger, templates: createdTemplates} = useGlobalContext();
   const [formFields, setFormFields] = useState([]);
   const [dynamicFields, setDynamicFields] = useState([]);
   const [templates, setTemplates] = useState([]);
@@ -208,6 +210,7 @@ const Home = () => {
           });
           console.log(response.data);
           setTemplates(prevTemplates => [...prevTemplates, { _id: response.data._id, name: templateName, fields: formFields }]);
+          setFetchTrigger(prevTrigger => prevTrigger + 1); // Trigger re-fetch
           setFormFields([]); // Clear formFields after adding to template
         } catch (error) {
           console.error(error);
@@ -252,22 +255,7 @@ const Home = () => {
         setFormFields([...formFields, imageField]);
         setImageField({ label: '', name: '', type: 'image' });
     };
-
-    useEffect(() => {
-      const fetchTemplates = async () => {
-        try {
-          const response = await axios.get('http://localhost:5000/api/v1/templates');
-          setTemplates(response.data);
-          console.log(templates, 'templates');
-        } catch (error) {
-          console.error(error);
-        }
-      };
-    
-      fetchTemplates();
-    }, [templates]);
-    
-
+   
     return (
         <div>
             <div className="flex">
@@ -282,13 +270,73 @@ const Home = () => {
             <div>
               <h2 className='text-2xl text-center p-3'>Template</h2>
               <button onClick={addToTemplate} className='p-2 rounded-md bg-green-500 hover:bg-green-700 w-[6vw] text-white font-semibold m-[2vw]'>Add to Template</button>
-              <select onChange={(e) => setSelectedTemplate(templates.find(template => template.name === e.target.value))}>
+              {/* <select onChange={(e) => setSelectedTemplate(templates.find(template => template.name === e.target.value))}>
                 <option value="">Select Template</option>
                 {templates.map(template => (
                   <option key={template.name} value={template.name}>{template.name}</option>
                 ))}
-              </select>
+              </select> */}
               {renderTemplateFields()}
+            </div>
+            <div className="ml-3vw border-2 w-full max-w-[50vw] p-3vw">
+            <main className='mt-vw grid grid-cols-2 gap-2'>
+
+            {createdTemplates?.map((item, index) => (
+  <div className="grid grid-cols-2 items-center gap-2" key={index}>
+    <div className="">
+      {item?.attributes.fields?.map((item2, index2) => (
+        <section key={index2}>
+          {item2?.type === 'input' ? (
+            <>
+            <label className='text-vw text-black ml-vw mt-2vw capitalize font-medium' htmlFor={item2?.label}>{item2?.label}</label>
+            <input className='p-2 rounded-md m-vw border-2 border-gray-500 focus:outline-none' placeholder={item2?.label} />
+            </>
+          ) : item2?.type === 'textarea' ? (
+            <>
+            <label className='text-vw text-black ml-vw mt-2vw capitalize font-medium' htmlFor={item2?.label}>{item2?.label}</label>
+            <textarea className='p-2 rounded-md m-vw border-2 border-gray-500 focus:outline-none' placeholder={item2?.label}></textarea>
+            </>
+          ) : item2?.type === 'radio' ? (
+            <>
+            <div className="flex items-center">
+           <section className="flex items-center m-vw">
+           <label className='text-vw text-black ml-vw mt-2vw capitalize font-medium' htmlFor={item2?.label}>{item2?.label}</label>
+              <input type="radio" className='p-2 rounded-md m-vw border-2 border-gray-500 focus:outline-none' name={item2?.name} />
+              <label className='ml-2'>{item2?.label}</label>
+           </section>
+           <section className="flex items-center m-vw">
+           <label className='text-vw text-black ml-vw mt-2vw capitalize font-medium' htmlFor={item2?.label2}>{item2?.label2}</label>
+              <input type="radio" className='p-2 rounded-md m-vw border-2 border-gray-500 focus:outline-none' name={item2?.name2} />
+              <label className='ml-2'>{item2?.label2}</label>
+           </section>
+            </div>
+            </>
+          ) : item2?.type === 'checkbox' ? (
+            <div className="flex items-center">
+              {/* <label className='text-vw text-black ml-vw mt-2vw capitalize font-medium' htmlFor={item2?.label}>{item2?.label}</label> */}
+              <input type="checkbox" className='p-2 rounded-md m-vw border-2 border-gray-500 focus:outline-none' name={item2?.name} />
+              <label className='ml-2'>{item2?.label}</label>
+            </div>
+          ) : item2?.type === 'image' ? (
+            <div className="flex flex-col items-center p-2">
+              <label className='text-vw text-black ml-vw mt-2vw capitalize font-medium' htmlFor={item2?.label}>{item2?.label}</label>
+              <img
+                src={item2?.name} // Assuming 'name' contains the image URL
+                alt='uploaded'
+                className='h-[50px] w-[50px] object-cover rounded-md m-vw border-2'
+              />
+            </div>
+          ) : null}
+        </section>
+
+      ))}
+<p className='font-semibold w-[20vw] flex items-center' key={index}>Template Name:{item?.TemplateName}</p>
+    </div>
+
+  </div>
+))}
+
+                </main>
             </div>
           </div>
         </div>

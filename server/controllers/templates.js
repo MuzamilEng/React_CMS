@@ -30,11 +30,13 @@ exports.createTemplate = async (req, res) => {
   
 // Get all components
 exports.getAllTemplates = (req, res) => {
+  console.log('request bodey');
     Template.find({}, (err, templates) => {
     if (err) {
       return res.status(500).json({ error: 'Error fetching templates' });
     }
-    res.json(templates);
+    res.status(200).json(templates);
+    console.log(templates, 'templates');
   });
 };
 
