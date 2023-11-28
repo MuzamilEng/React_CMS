@@ -1,28 +1,31 @@
-// Create a new component
 const Template = require('../models/template');
 
 exports.createTemplate = async (req, res) => {
-    const { TemplateName, attributes } = req.body;
-  
-    try {
-      const newTemplate = new Template();
-      newTemplate.TemplateName = TemplateName;
-      newTemplate.attributes = attributes;
-  
-      console.log(newTemplate, 'newTemplate');
-  
-      const saveTemplate = await newTemplate.save();
-  
-      res.status(201).json({
-        success: true,
-        saveTemplate,
-        payloadData: req.body,
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: 'Error saving template' });
-    }
-  };
+  const { name, fields } = req.body; // Assuming your payload has 'name' and 'fields'
+
+  try {
+    const newTemplate = new Template({
+      TemplateName: name, // Map 'name' to 'TemplateName'
+      attributes: { fields }, // Map 'fields' to 'attributes'
+    });
+
+    console.log(newTemplate, 'newTemplate --------------------1');
+    console.log(req.body, 'req.body --------------------2');
+    console.log(newTemplate.toObject(), 'newTemplate ----------------------3');
+
+    const saveTemplate = await newTemplate.save();
+
+    res.status(201).json({
+      success: true,
+      saveTemplate,
+      payloadData: req.body,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error saving template' });
+  }
+};
+
   
   
 // Get all components
