@@ -1,9 +1,11 @@
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
+require('dotenv').config({ path: '.env' })
 const componentsRoutes = require('./routes/components');
 const templateRoutes = require('./routes/templates');
 const cors = require('cors');
+
 
 
 const port = 5000; // Set the port directly

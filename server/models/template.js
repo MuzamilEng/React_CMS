@@ -1,10 +1,15 @@
 const mongoose = require('mongoose');
 
 const templateSchema = new mongoose.Schema({
-  TemplateName: String,
-  attributes: JSON, // Store dynamic attributes here
+  mainTitle: String,
+  templates: [
+    {
+      TemplateName: String,
+      attributes: JSON, // Store dynamic attributes here
+    },
+  ],
 });
 
- const Template = mongoose.model('Template', templateSchema);
+const Template = mongoose.model('Template', templateSchema);
 
 module.exports = Template;

@@ -1,23 +1,27 @@
 const Template = require('../models/template');
 
 exports.createTemplate = async (req, res) => {
-  const { name, fields } = req.body; // Assuming your payload has 'name' and 'fields'
+  const { mainTitle, templates } = req.body;
+  console.log(req.body, 'req.body');
 
   try {
-    const newTemplate = new Template({
-      TemplateName: name, // Map 'name' to 'TemplateName'
-      attributes: { fields }, // Map 'fields' to 'attributes'
-    });
+    // Find or create a document with the specified mainTitle
+    let templateDoc = await Template.findOne({ mainTitle });
 
-    console.log(newTemplate, 'newTemplate --------------------1');
-    console.log(req.body, 'req.body --------------------2');
-    console.log(newTemplate.toObject(), 'newTemplate ----------------------3');
+    if (!templateDoc) {
+      templateDoc = new Template({ mainTitle, templates: [] });
+    }
 
-    const saveTemplate = await newTemplate.save();
+    // Add the new templates to the templates array
+    templateDoc.templates.push({})
+
+    // Save the updated document
+    const savedTemplate = await templateDoc.save();
+    console.log(savedTemplate, 'savedTemplate');
 
     res.status(201).json({
       success: true,
-      saveTemplate,
+      savedTemplate,
       payloadData: req.body,
     });
   } catch (error) {
@@ -25,6 +29,33 @@ exports.createTemplate = async (req, res) => {
     res.status(500).json({ error: 'Error saving template' });
   }
 };
+
+
+// exports.createTemplate = async (req, res) => {
+//   const { name, fields } = req.body; // Assuming your payload has 'name' and 'fields'
+
+//   try {
+//     const newTemplate = new Template({
+//       TemplateName: name, // Map 'name' to 'TemplateName'
+//       attributes: { fields }, // Map 'fields' to 'attributes'
+//     });
+
+//     console.log(newTemplate, 'newTemplate --------------------1');
+//     console.log(req.body, 'req.body --------------------2');
+//     console.log(newTemplate.toObject(), 'newTemplate ----------------------3');
+
+//     const saveTemplate = await newTemplate.save();
+
+//     res.status(201).json({
+//       success: true,
+//       saveTemplate,
+//       payloadData: req.body,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: 'Error saving template' });
+//   }
+// };
 
   
   
