@@ -13,7 +13,7 @@ exports.createTemplate = async (req, res) => {
     }
 
     // Add the new templates to the templates array
-    templateDoc.templates.push({})
+    templateDoc.templates.push(...templates)
 
     // Save the updated document
     const savedTemplate = await templateDoc.save();

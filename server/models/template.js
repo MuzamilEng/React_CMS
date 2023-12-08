@@ -4,8 +4,8 @@ const templateSchema = new mongoose.Schema({
   mainTitle: String,
   templates: [
     {
-      TemplateName: String,
-      attributes: JSON, // Store dynamic attributes here
+      name: String,
+      fields: [Object], // Store dynamic attributes here
     },
   ],
 });

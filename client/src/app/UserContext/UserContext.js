@@ -9,6 +9,7 @@ export const UserProvider = ({ children }) => {
   const [content, setContent] = useState([]);
   const [templates, setTemplates] = useState([]);
   const [fetchTrigger, setFetchTrigger] = useState(0);
+  const [selectTemplate, setSelectTemplate] = useState(null);
   const fetchTemplates = async () => {
     try {
       const response = await axios.get('http://localhost:5000/api/v1/templates');
@@ -28,7 +29,7 @@ export const UserProvider = ({ children }) => {
 
 
   return (
-    <UserContext.Provider value={{ content, setContent, templates, setTemplates, setFetchTrigger }}>
+    <UserContext.Provider value={{ content, setContent, templates, setTemplates, setFetchTrigger, fetchTrigger, selectTemplate, setSelectTemplate }}>
       {children}
     </UserContext.Provider>
   );

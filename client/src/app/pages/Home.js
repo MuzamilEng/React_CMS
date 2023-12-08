@@ -4,12 +4,16 @@ import axios from 'axios';
 import Sidebar from '../Component/Sidebar';
 import { useGlobalContext } from '../UserContext/UserContext';
 import TemplatesBar from '../Component/TemplatesBar';
+import { useLocation, useParams } from "react-router-dom";
+
 
 const Home = () => {
-  const {setFetchTrigger, templates: createdTemplates} = useGlobalContext();
+  const {setFetchTrigger, templates: createdTemplates, selectTemplate} = useGlobalContext();
+  console.log(selectTemplate, 'selectTemplate');
   const [formFields, setFormFields] = useState([]);
   const [dynamicFields, setDynamicFields] = useState([]);
   const [templates, setTemplates] = useState([]);
+
   const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [inputField, setInputField] = useState({ label: '', name: '', type: 'input' });
   const [textareaField, setTextareaField] = useState({ label: '', name: '', type: 'textarea' });
@@ -276,7 +280,98 @@ const Home = () => {
             <div className="flex">
                 <Sidebar onInputClick={onInputClick} onImageClick={onImageClick} onRadioClick={onRadioClick} onTextareaClick={onTextareaClick} onButtonClick={onButtonClick} onCheckboxClick={onCheckboxClick} />
                 <div className="">
-          <h1 className='text-3xl font-bold text-center p-3'>Danhamz Practice Form Builder</h1>
+                <div>
+      {/* <h2>Fields for Template: {selectedTemplateName}</h2> */}
+      {selectTemplate?.fields?.map((field, index) => (
+        <section key={index}>
+        {field?.type === "input" ? (
+   <>
+     <label
+       className="text-vw text-black ml-vw mt-2vw capitalize font-medium"
+       htmlFor={field?.label}
+     >
+       {field?.label}
+     </label>
+     <input
+       className="p-2 rounded-md m-vw border-2 border-gray-500 focus:outline-none"
+       placeholder={field?.label}
+     />
+   </>
+ ) : field?.type === "textarea" ? (
+   <>
+     <label
+       className="text-vw text-black ml-vw mt-2vw capitalize font-medium"
+       htmlFor={field?.label}
+     >
+       {field?.label}
+     </label>
+     <textarea
+       className="p-2 rounded-md m-vw border-2 border-gray-500 focus:outline-none"
+       placeholder={field?.label}
+     ></textarea>
+   </>
+ ) : field?.type === "radio" ? (
+   <>
+     <div className="flex items-center">
+       <section className="flex items-center m-vw">
+         <label
+           className="text-vw text-black ml-vw mt-2vw capitalize font-medium"
+           htmlFor={field?.label}
+         >
+           {field?.label}
+         </label>
+         <input
+           type="radio"
+           className="p-2 rounded-md m-vw border-2 border-gray-500 focus:outline-none"
+           name={field?.name}
+         />
+         <label className="ml-2">{field?.label}</label>
+       </section>
+       <section className="flex items-center m-vw">
+         <label
+           className="text-vw text-black ml-vw mt-2vw capitalize font-medium"
+           htmlFor={field?.label2}
+         >
+           {field?.label2}
+         </label>
+         <input
+           type="radio"
+           className="p-2 rounded-md m-vw border-2 border-gray-500 focus:outline-none"
+           name={field?.name2}
+         />
+         <label className="ml-2">{field?.label2}</label>
+       </section>
+     </div>
+   </>
+ ) : field?.type === "checkbox" ? (
+   <div className="flex items-center">
+     {/* <label className='text-vw text-black ml-vw mt-2vw capitalize font-medium' htmlFor={field?.label}>{field?.label}</label> */}
+     <input
+       type="checkbox"
+       className="p-2 rounded-md m-vw border-2 border-gray-500 focus:outline-none"
+       name={field?.name}
+     />
+     <label className="ml-2">{field?.label}</label>
+   </div>
+ ) : field?.type === "image" ? (
+   <div className="flex flex-col items-center p-2">
+     <label
+       className="text-vw text-black ml-vw mt-2vw capitalize font-medium"
+       htmlFor={field?.label}
+     >
+       {field?.label}
+     </label>
+     <img
+       src={field?.name} // Assuming 'name' contains the image URL
+       alt="uploaded"
+       className="h-[50px] w-[50px] object-cover rounded-md m-vw border-2"
+     />
+   </div>
+ ) : null}
+               </section>
+      ))}
+    </div>
+          {/* <h1 className='text-3xl font-bold text-center p-3'>Danhamz Practice Form Builder</h1> */}
           {/* <h1 className='text-3xl font-bold text-center p-3'>Form Builder</h1> */}
           <div className="flex">
             <form className="" onSubmit={handleSubmit}>
